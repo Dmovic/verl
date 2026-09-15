@@ -276,6 +276,7 @@ def prime_delta_snapshots(gen, snaps: dict, pin: bool) -> None:
             snaps[name] = snap
         snap.copy_(local, non_blocking=True)
 
+
 def detach_tree(obj):
     """Strip the autograd graph from reported tensors, keeping the data.
 
