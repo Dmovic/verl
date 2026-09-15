@@ -1455,7 +1455,8 @@ class MegatronEngineWithLMHead(MegatronEngine):
             metrics = {}
         output = {"loss": loss.detach().item(), "metrics": metrics}
         if forward_only or not self.engine_config.dynamic_context_parallel:
-            output["model_output"] = model_output
+            # Detach before this reaches Megatron's forward_data_store; see detach_tree.
+            output["model_output"] = detach_tree(model_output)
         if self.engine_config.dynamic_context_parallel:
             output[DCP_SAMPLE_IDS] = tu.get_non_tensor_data(data, key=DCP_SAMPLE_IDS, default=None)
             output[DCP_GROUP_LEADER] = tu.get_non_tensor_data(data, key=DCP_GROUP_LEADER, default=False)
