@@ -1453,7 +1453,7 @@ class MegatronEngineWithLMHead(MegatronEngine):
             loss = torch.tensor(1.0, device=device)
             scaled_loss = loss
             metrics = {}
-        output = {"loss": loss.detach().item(), "metrics": metrics}
+        output = {"loss": loss.detach().item(), "metrics": detach_tree(metrics)}
         if forward_only or not self.engine_config.dynamic_context_parallel:
             # Detach before this reaches Megatron's forward_data_store; see detach_tree.
             output["model_output"] = detach_tree(model_output)
