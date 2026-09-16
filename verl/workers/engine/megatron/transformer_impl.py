@@ -80,7 +80,7 @@ from verl.utils.seqlen_balancing import restore_dynamic_batch
 from verl.workers.config import HFModelConfig, McoreEngineConfig, McoreOptimizerConfig
 
 from ..base import BaseEngine, BaseEngineCtx, EngineRegistry
-from ..utils import postprocess_batch_func, prepare_micro_batches
+from ..utils import detach_tree, postprocess_batch_func, prepare_micro_batches
 from .utils import set_random_seed
 
 logger = logging.getLogger(__file__)
@@ -1453,7 +1453,7 @@ class MegatronEngineWithLMHead(MegatronEngine):
             loss = torch.tensor(1.0, device=device)
             scaled_loss = loss
             metrics = {}
-        output = {"loss": loss.detach().item(), "metrics": detach_tree(metrics)}
+        output = {"loss": loss.detach().item(), "metrics": metrics}
         if forward_only or not self.engine_config.dynamic_context_parallel:
             # Detach before this reaches Megatron's forward_data_store; see detach_tree.
             output["model_output"] = detach_tree(model_output)
